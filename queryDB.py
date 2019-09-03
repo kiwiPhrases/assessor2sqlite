@@ -1,10 +1,22 @@
 """
--there are 2 tables: 1) assessor and 2) history \n
-(ie SELECT * FROM history LIMIT 5;)\n
+To use queryDB.py, you first have to make sure that:
+    1) Python 3+ is installed (preferrably Anaconda)
+    2) The paths identifying name and location of database are correct (data_path, dbname)
+    
+There are 2 tables in the db: 
+    1) assessor (ie SELECT * FROM assessor LIMIT 5;)
+    2) history (ie SELECT * FROM history LIMIT 5;)
+ 
+Queries:
 -all column names are lower case and have underscores for spaces\n
 (ie SELECT mm_fips_county_name FROM assessor LIMIT 5;)\n
 -to aggregate by certain columns, you can use GROUP BY \n
 (ie SELECT mm_fips_county_name count(*) as num FROM assessor GROUP BY mm_fips_county_name;)\n
+-assessor and history files are joined via propid so you can load change-of-owner history 
+of any property in the data.
+(ie SELECT * FROM INNER JOIN assessor WITH history ON assessor.propid=history.propid LIMIT 5;)
+-there is also a VIEW on the merger of assessor and history tables
+so instead of the above, you can use (ie SELECT * FROM assessorHistory LIMIT 5;)
 """
 
 # essentials
