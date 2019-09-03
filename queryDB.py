@@ -10,12 +10,14 @@
 # essentials
 import pandas as pd
 import time
+import os
 
-# database interface
+# database interface/driver
 import sqlite3
 
-# path of data
-data_path = "D:/DataQuick"
+# paths of data
+data_path = "H:/"
+dbname = "coreLogic_dataQuick_data_ver2.db"
 
 #query function
 def askAgain(response):
@@ -24,14 +26,20 @@ def askAgain(response):
         response = input("Type y or n: ")
     return(response)
     
-def accessDB(dbfile = 'coreLogicAH.db'):
-    conn =  sqlite3.connect("/".join([data_path, dbfile]))
-    print("Connection opened to [%s]" %dbfile)
-
-    repeatQuery(conn)
+def accessDB(dbfile = dbname):
+    dblocation = "/".join([data_path, dbfile])
+    print("Presumed location of database file: %s" %dblocation)
+    if os.path.exists(dblocation):
+        conn =  sqlite3.connect(dblocation)
+        print("Connection opened to [%s]" %dbfile)
         
-    conn.close()
-    print("\tDB connection closed")
+        repeatQuery(conn)
+        
+        conn.close()
+        print("\tDB connection closed")
+        
+    else:
+        print("Can't find database file, please check the paths.")
     
 def repeatQuery(conn):
     askAnother = 'y'
@@ -53,16 +61,14 @@ def repeatQuery(conn):
                 askAnother = 'y'
 
 def queryDB(query, conn):
-    start = time.time()
+    start_time = time.time()
     df = pd.read_sql_query(query, conn)
-    end = time.time()
-    print("\tnumber of minutes elapsed for query: %.2f " %((end-start)/60))
+    print("\tthis query took: %.2fseconds " %((start_time - time.time())))
     print("\tsize of file read in:", df.shape)
     
     toPrint = askAgain(input("Want to display first 10 rows of query? Type y or n: "))
     if toPrint == 'y':
         print(df.head(n=10))
-        
     return(df)
     
 def toSaveCSV(df):    
@@ -77,6 +83,18 @@ def toSaveCSV(df):
         print("Saving query in CSV to: %s" %fpath)
         df.to_csv(fpath)
         print("\tfinished saving")
+        
+def getTableNames(dbfile, lookfor="'table'"):
+    #open connection
+    conn =  sqlite3.connect("/".join([data_path, dbfile]))
+    c = conn.cursor()
+
+    #fetch names
+    res = c.execute("SELECT name FROM sqlite_master WHERE type=%s;" %lookfor)
+    print(res.fetchall())
+    
+    #close connection
+    conn.close()           
         
 def main():
     accessDB()
