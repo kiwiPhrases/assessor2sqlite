@@ -75,7 +75,7 @@ def repeatQuery(conn):
 def queryDB(query, conn):
     start_time = time.time()
     df = pd.read_sql_query(query, conn)
-    print("\tthis query took: %.2fseconds " %((start_time - time.time())))
+    print("\tthis query took: %.2fseconds " %((time.time() - start_time)))
     print("\tsize of file read in:", df.shape)
     
     toPrint = askAgain(input("Want to display first 10 rows of query? Type y or n: "))
