@@ -71,17 +71,23 @@ def repeatQuery(conn):
             print("--"*30)
             if tryAgain == 'y':
                 askAnother = 'y'
+            if tryAgain == 'n':
+                break
 
 def queryDB(query, conn):
     start_time = time.time()
-    df = pd.read_sql_query(query, conn)
-    print("\tthis query took: %.2fseconds " %((time.time() - start_time)))
-    print("\tsize of file read in:", df.shape)
+    try:
+        df = pd.read_sql_query(query, conn)
+        print("\tthis query took: %.2fseconds " %((time.time() - start_time)))
+        print("\tsize of file read in:", df.shape)
+        toPrint = askAgain(input("Want to display first 10 rows of query? Type y or n: "))
+        if toPrint == 'y':
+            print(df.head(n=10))
+        return(df)
+    except MemoryError:
+        print("The result from query is too large. Try running largeQueryDB.py")
+        return(None)
     
-    toPrint = askAgain(input("Want to display first 10 rows of query? Type y or n: "))
-    if toPrint == 'y':
-        print(df.head(n=10))
-    return(df)
     
 def toSaveCSV(df):    
     toCSV = askAgain(input("Save query to csv? Type y or n: "))
