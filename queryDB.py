@@ -34,8 +34,11 @@ import sqlite3
 def definePaths(data_path = "F:/",dbname="coreLogic_dataQuick_data_ver2.db"):
     print("Program thinks database is here: %s" %data_path)
     while os.path.exists("/".join([data_path, dbname])) is False:
-        response = askAgain(input("..the above path doesn't exist. To change, type y to quite type n"))
-        data_path = input("Type new path: ")
+        response = askAgain(input("..the above path doesn't exist. To change, type y. To quit type n: "))
+        if response == 'y':
+            data_path = input("Type new path: ")
+        if response == 'n':
+            break
     return("/".join([data_path, dbname]))
 
 #query function
