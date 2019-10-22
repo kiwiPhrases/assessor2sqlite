@@ -27,9 +27,16 @@ import os
 # database interface/driver
 import sqlite3
 
-# paths of data
-data_path = "H:/"
-dbname = "coreLogic_dataQuick_data_ver2.db"
+# paths to data
+#data_path = "F:/"
+#dbname = "coreLogic_dataQuick_data_ver2.db"
+
+def definePaths(data_path = "F:/",dbname="coreLogic_dataQuick_data_ver2.db")
+    print("Program thinks database is here: %s" %data_path)
+    while os.path.exists("/".join([data_path, dbname])) is False:
+        response = askAgain(input("..the above path doesn't exist. To change, type y to quite type n"))
+        data_path = input("Type new path: ")
+    return(data_path, dbname)
 
 #query function
 def askAgain(response):
@@ -115,6 +122,7 @@ def getTableNames(dbfile, lookfor="'table'"):
     conn.close()           
         
 def main():
+    data_path, dbname = definePaths()
     accessDB()
     
 if __name__ == '__main__':
