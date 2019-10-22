@@ -32,20 +32,20 @@ import sqlite3
 #conn = None
 #shutdown = False
 
-# paths of data
-data_path = "F:/"
-dbname = "coreLogic_dataQuick_data_ver2.db"
+# paths to data
+#data_path = "F:/"
+#dbname = "coreLogic_dataQuick_data_ver2.db"
 
-# query killing function
-#def interrupt(signum, frame):
-#    global conn
-#    global shutdown
-#
-#    print("Interrupt requested")
-#    if conn:
-#        conn.interrupt()
+def definePaths(data_path = "H:",dbname="coreLogic_dataQuick_data_ver2.db"):
+    print("Program thinks database is here: %s" %data_path)
+    while os.path.exists("/".join([data_path, dbname])) is False:
+        response = askAgain(input("..the above path doesn't exist. To change, type y. To quit type n: "))
+        if response == 'y':
+            data_path = input("Type new path: ")
+        if response == 'n':
+            break
+    return("/".join([data_path, dbname]))
 
-#query function
 #query function
 def askAgain(response):
     while (response != 'y') & (response != 'n'):
@@ -53,14 +53,15 @@ def askAgain(response):
         response = input("Type y or n: ")
     return(response)
     
-def accessDB(dbfile = dbname):
-    dblocation = "/".join([data_path, dbfile])
-    print("Presumed location of database file: %s" %dblocation)
+def accessDB(dblocation):
+    #dblocation = "/".join([data_path, dbfile])
+    #print("Presumed location of database file: %s" %dblocation)
     if os.path.exists(dblocation):
         conn =  sqlite3.connect(dblocation)
-
-        print("Connection opened to [%s]" %dbfile)
+        print("Connection opened to %s" %dblocation)
+        
         repeatQuery(conn)
+        
         conn.close()
         print("\tDB connection closed")
         
@@ -150,9 +151,8 @@ def getTableNames(dbfile, lookfor="'table'"):
     conn.close()          
         
 def main():
-
-    #global conn
-    accessDB()
+    dblocation = definePaths()
+    accessDB(dblocation)
 
 if __name__ == '__main__':
     #signal.signal(signal.SIGINT, interrupt)
