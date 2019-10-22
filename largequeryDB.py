@@ -115,6 +115,7 @@ def largequeryDB(query, conn, chunksize = int(1e5)):
             print("chunk #:", i)
         rows.to_csv("/".join([data_path, filename]),mode='a+')
     print("Done saving to file. Approximate number of observations:", (i+1)*chunksize)
+    print("This took %.0f seconds" %(time.time()-start_time))
     return(None)
     #answer = askAgain(input("Want to display first 10 rows of query? Type y or n: "))
     #if (answer == 'y'):
