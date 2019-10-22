@@ -53,7 +53,7 @@ def accessDB(dblocation):
     #print("Presumed location of database file: %s" %dblocation)
     if os.path.exists(dblocation):
         conn =  sqlite3.connect(dblocation)
-        print("Connection opened to [%s]" %dblocation)
+        print("Connection opened to %s" %dblocation)
         
         repeatQuery(conn)
         
