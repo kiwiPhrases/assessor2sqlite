@@ -147,7 +147,7 @@ def main():
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, interrupt)
 
-    mainthread = threading.Thread(target=main)
+    mainthread = threading.Thread(target=repeatQuery)
     mainthread.start()
 
     while mainthread.isAlive():
