@@ -80,33 +80,31 @@ def repeatQuery(conn):
             if askAnother == 'n':
                 break
         except Exception as err:
-            print("--"*30)
-            print(err)
-            tryAgain = askAgain(input("\nCorrect error and try again? Type y or n: "))
-            print("--"*30)
-            if tryAgain == 'y':
-                askAnother = 'y'
-            if tryAgain == 'n':
+            if str(err) == "interrupted":
+                print(err)
+                print("If interrupted because too long, try running largeQueryDB.py")
                 break
+            else:
+                print("--"*30)
+                print(err)
+                tryAgain = askAgain(input("\nCorrect error and try again? Type y or n: "))
+                print("--"*30)
+                if tryAgain == 'y':
+                    askAnother = 'y'
+                if tryAgain == 'n':
+                    break
 
 def queryDB(query, conn):
     start_time = time.time()
-    try:
-        df = pd.read_sql_query(query, conn)
-        print("\tthis query took: %.2fseconds " %((time.time() - start_time)))
-        print("\tsize of file read in:", df.shape)
-        toPrint = askAgain(input("Want to display first 10 rows of query? Type y or n: "))
-        if toPrint == 'y':
-            print(df.head(n=10))
-        return(df)
-    except Exception as err:
-        if str(err) != "interrupted":
-            print ("Database error: {0}".format(str(err)))
-            print("The result from query is too large. Try running largeQueryDB.py")
-            conn.close()
-        return(None)
+    df = pd.read_sql_query(query, conn)
+    print("\tthis query took: %.2fseconds " %((time.time() - start_time)))
+    print("\tsize of file read in:", df.shape)
+    toPrint = askAgain(input("Want to display first 10 rows of query? Type y or n: "))
+    if toPrint == 'y':
+        print(df.head(n=10))
+    return(df)
     
-    
+
 def toSaveCSV(df):    
     toCSV = askAgain(input("Save query to csv? Type y or n: "))
 
