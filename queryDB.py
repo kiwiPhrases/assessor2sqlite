@@ -49,6 +49,18 @@ def askAgain(response):
     return(response)
     
 def accessDB(dblocation):
+    print("--"*20)
+    print("Before you start, is this a large query? (ie You are fetching data for an entire county or city)")
+    print("If yes, please run largequeryDB.py instead")
+    print("If you are unsure, run largequeryDB.py")
+    response = askAgain(input("To proceed, type y. To exit, type n: "))
+    if response == 'n':
+        print("exiting")
+        return(None)
+    if response == 'y':
+        print("continuing")
+        print("--"*20)
+
     #dblocation = "/".join([data_path, dbfile])
     #print("Presumed location of database file: %s" %dblocation)
     if os.path.exists(dblocation):
@@ -86,17 +98,14 @@ def repeatQuery(conn):
 
 def queryDB(query, conn):
     start_time = time.time()
-    try:
-        df = pd.read_sql_query(query, conn)
-        print("\tthis query took: %.2fseconds " %((time.time() - start_time)))
-        print("\tsize of file read in:", df.shape)
-        toPrint = askAgain(input("Want to display first 10 rows of query? Type y or n: "))
-        if toPrint == 'y':
-            print(df.head(n=10))
-        return(df)
-    except MemoryError:
-        print("The result from query is too large. Try running largeQueryDB.py")
-        return(None)
+    df = pd.read_sql_query(query, conn)
+    print("\tthis query took: %.2fseconds " %((time.time() - start_time)))
+    print("\tsize of file read in:", df.shape)
+    toPrint = askAgain(input("Want to display first 10 rows of query? Type y or n: "))
+    if toPrint == 'y':
+        print(df.head(n=10))
+    return(df)
+
     
     
 def toSaveCSV(df):    
