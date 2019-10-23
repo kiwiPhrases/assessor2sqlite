@@ -23,9 +23,14 @@ so instead of the above, you can use (ie SELECT * FROM assessorHistory LIMIT 5;)
 import pandas as pd
 import time
 import os
+import signal
+import threading
 
 # database interface/driver
 import sqlite3
+
+conn = None
+shutdown = False
 
 # paths to data
 #data_path = "F:/"
@@ -94,8 +99,11 @@ def queryDB(query, conn):
         if toPrint == 'y':
             print(df.head(n=10))
         return(df)
-    except MemoryError:
-        print("The result from query is too large. Try running largeQueryDB.py")
+    except Exception as err:
+        if str(err) != "interrupted":
+            print ("Database error: {0}".format(str(err)))
+            print("The result from query is too large. Try running largeQueryDB.py")
+            conn.close()
         return(None)
     
     
@@ -111,6 +119,15 @@ def toSaveCSV(df):
         print("Saving query in CSV to: %s" %fpath)
         df.to_csv(fpath)
         print("\tfinished saving")
+
+def interrupt(signum, frame):
+    global conn
+    global shutdown
+
+    print ("Interrupt requested")
+
+    if conn:
+        conn.interrupt()
         
 def getTableNames(dbfile, lookfor="'table'"):
     #open connection
@@ -125,8 +142,16 @@ def getTableNames(dbfile, lookfor="'table'"):
     conn.close()           
         
 def main():
+    global conn
     dblocation = definePaths()
     accessDB(dblocation)
     
 if __name__ == '__main__':
+    signal.signal(signal.SIGINT, interrupt)
+
+    mainthread = threading.Thread(target=main)
+    mainthread.start()
+
+    while mainthread.isAlive():
+        time.sleep(0.2)
     main()    
